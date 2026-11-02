@@ -1,4 +1,4 @@
-from services.records import initialize_database,create_case
+from services.records import initialize_database,create_case,search_case
 
 def display_menu(): 
     print("\n====AICMS====")
@@ -38,7 +38,16 @@ def main():
                     print(f"{key}:{value}")
                 create_case(case_info)
             case "2":
-                print("Search For Case")
+                field_name = "Student ID"
+                student_id = input("Enter Student ID: ")
+                # search_case(student_id)
+                # print(search_case)
+                records = search_case(student_id)
+                if records: 
+                    for record in records:
+                        print(record)
+                else:
+                    print("No such student")
             case "3": 
                 print("All Cases")
             case "4":
