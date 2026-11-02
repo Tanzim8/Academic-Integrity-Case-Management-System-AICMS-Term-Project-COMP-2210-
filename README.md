@@ -1,0 +1,2 @@
+# Academic-Integrity-Case-Management-System-AICMS-Term-Project-COMP-2210-
+AICMS is a python based GUI application built to manage academic integrity case reports at Thompson Rivers University. Users can enter, store, search, display, update and delete case records based on the university's Academic Integrity Case Report From. Informations related to students, faculty members etc. are managed by this app.
