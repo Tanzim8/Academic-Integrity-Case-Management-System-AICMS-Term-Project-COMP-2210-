@@ -45,14 +45,47 @@ def create_case(case_info):
     connection.commit()
     connection.close()
 
-def search_case(student_number):
+def search_case(field, value):
     connection = sqlite3.connect("data/cases.db")
     cursor = connection.cursor()
 
+    allowed_fields = [
+        "record_id",
+        "student_name",
+        "student_number",
+        "faculty_name"
+    ]
+
+    if field not in allowed_fields:
+        connection.close()
+        return[]
+
     cursor.execute(
-        "SELECT * FROM cases WHERE student_number = ?",
-        (student_number,)
+        f"SELECT * FROM cases WHERE {field}= ?",
+        (value,)
     )
     records = cursor.fetchall()
     connection.close()
     return records
+
+def display_all_cases():
+    connection = sqlite3.connect("data/cases.db")
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "SELECT * FROM cases"
+    )
+    records = cursor.fetchall()
+    connection.close()
+    return records
+
+def delete_case(record_id): 
+    connection = sqlite3.connect("data/cases.db")
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "DELETE FROM cases WHERE record_id=?",
+    (record_id,)
+    )
+    connection.commit()
+    connection.close()

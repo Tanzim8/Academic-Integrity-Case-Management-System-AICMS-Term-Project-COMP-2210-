@@ -1,4 +1,4 @@
-from services.records import initialize_database,create_case,search_case
+from services.records import initialize_database,create_case,search_case, display_all_cases,delete_case
 
 def display_menu(): 
     print("\n====AICMS====")
@@ -49,9 +49,30 @@ def main():
                 else:
                     print("No such student")
             case "3": 
-                print("All Cases")
+                # print("All Cases")
+                records = display_all_cases()
+
+                if records: 
+                    for record in records:
+                        print(record)
+                else: 
+                    print("Empty Database")
             case "4":
-                print("Choose case to update")
+                user_input = int(input("Enter record ID: "))
+
+                records = search_case("record_id", user_input)
+
+                if records:
+                    print("To Delete: ")
+                    for record in records: 
+                        print(record)
+                    user_confirmation = int(input("Press 1 to confirm deletion: "))
+                    if user_confirmation != 1:
+                        user_confirmation = int(input("Press 1 to confirm deletion: "))
+                    else: 
+                        delete_case(user_input)
+                
+                # print("Choose case to update")
             case "5":
                 print("Choose case to delete")
             case "6":
