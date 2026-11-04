@@ -89,3 +89,12 @@ def delete_case(record_id):
     )
     connection.commit()
     connection.close()
+
+def update_case(record_id, field, new_value):
+    connection = sqlite3.connect("data/cases.db")
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "UPDATE cases SET field = ? WHERE record_id = ?",
+        (new_value,record_id)
+    )
