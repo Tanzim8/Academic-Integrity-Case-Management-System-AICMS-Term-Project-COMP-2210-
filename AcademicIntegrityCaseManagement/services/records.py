@@ -1,5 +1,8 @@
 import sqlite3
 
+
+#creating database table if doesnt exists
+#defining the fields to store academic integrity case reports
 def initialize_database():
     connection = sqlite3.connect("data/cases.db")
     cursor = connection.cursor()
@@ -51,6 +54,8 @@ def initialize_database():
     connection.close()
 
 
+#Inserting a new case in the database using the collected information
+#Generating SQL placeholders dynamically based on the provided fields.
 def create_case(case_info): 
     connection = sqlite3.connect("data/cases.db")
     cursor = connection.cursor()
@@ -68,6 +73,9 @@ def create_case(case_info):
     connection.commit()
     connection.close()
 
+
+#Searching for case records using an approved search field
+#Returning all records which matched the value provided
 def search_case(field, value):
     connection = sqlite3.connect("data/cases.db")
     cursor = connection.cursor()
@@ -91,6 +99,7 @@ def search_case(field, value):
     connection.close()
     return records
 
+#Retrieving all the records from the database and displaying them
 def display_all_cases():
     connection = sqlite3.connect("data/cases.db")
     cursor = connection.cursor()
@@ -103,9 +112,13 @@ def display_all_cases():
     return records
 
 
+
+#Updating a specific field in an existing case using its unique record id
 def update_case(record_id, field, new_value):
     connection = sqlite3.connect("data/cases.db")
     cursor = connection.cursor()
+
+    #Restrict updates to valid database columns
     allowed_fields=[
         "student_name",
         "student_number",
@@ -176,11 +189,14 @@ def update_case(record_id, field, new_value):
         (new_value,record_id)
     )
 
+    #Checking wether the updated affected a record
     updated = cursor.rowcount >0
     connection.commit()
     connection.close()
     return updated
 
+
+#Deleting a case using its unique record_id
 def delete_case(record_id): 
     connection = sqlite3.connect("data/cases.db")
     cursor = connection.cursor()
