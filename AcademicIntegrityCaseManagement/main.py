@@ -46,6 +46,8 @@ def collect_case_information():
         "faculty_comments",
         "student_comments"
     ]
+
+    required_fields = fields[:10]
     case_info= {}
     for field in fields:
         if field in ["support_person_advised","written_statement_advised","evidence_reviewed","chair_agrees", "dean_agrees"]:
@@ -57,10 +59,21 @@ def collect_case_information():
                 if answer in ["y","n"]:
                     value = 1 if answer =="y" else 0
                     break
+                elif answer =="":
+                    value = None
+                    break
                 else: 
                     print("Invalid input! Please enter Y or N")
         else:
             value = input(f"Enter {field.replace('_',' ').title()}: ")
+
+            if field in required_fields:
+                while not value.strip():
+                    print("This field is required")
+                    value = value = input(f"Enter {field.replace('_',' ').title()}: ")
+
+            elif value.strip() == "":
+                value = None
         case_info[field] = value
     return case_info
 
