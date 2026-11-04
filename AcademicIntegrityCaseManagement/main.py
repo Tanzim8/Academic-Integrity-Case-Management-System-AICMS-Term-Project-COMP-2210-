@@ -1,5 +1,7 @@
 from services.records import initialize_database,create_case,search_case, display_all_cases,delete_case,update_case
 
+
+#Method to display the main menu
 def display_menu(): 
     print("\n====AICMS====")
     print("1. Create New Case")
@@ -9,7 +11,12 @@ def display_menu():
     print("5. Delete Case")
     print("6. Exit")
 
+#Method to collect information for a new academic integrity case
+#Required first 10 fields must be completed th eoptional fields can be left blank
+#Returns the collected information as a dictionary
 def collect_case_information(): 
+
+    #list of all editable fields from the ACIMS form
     fields=[
         "student_name",
         "student_number",
@@ -47,7 +54,10 @@ def collect_case_information():
         "student_comments"
     ]
 
+    #The first 10 mandatory fields, rest are optional
     required_fields = fields[:10]
+
+    #usong dictionary to store field names and their values
     case_info= {}
     for field in fields:
         if field in ["support_person_advised","written_statement_advised","evidence_reviewed","chair_agrees", "dean_agrees"]:
@@ -56,9 +66,11 @@ def collect_case_information():
                     f"Enter {field.replace('_',' ').title()} (Y/N)"
                 ).strip().lower()
 
+                #Handling checkbox fields by y/n
                 if answer in ["y","n"]:
                     value = 1 if answer =="y" else 0
                     break
+                #storing none if user skips the optional checkbox
                 elif answer =="":
                     value = None
                     break
@@ -72,11 +84,17 @@ def collect_case_information():
                     print("This field is required")
                     value = input(f"Enter {field.replace('_',' ').title()}: ")
 
+            # Store None for blank optional fields so SQLite saves them as NULL.
             elif value.strip() == "":
                 value = None
+
+        #Saving the validated input under its field name
         case_info[field] = value
+    #Returning the completed dictionary
     return case_info
 
+
+#Using a function ro return all editable fields and the function returns a list
 def get_update_fields():
     connection_fields = [
         "student_name", "student_number", "student_email",
@@ -93,15 +111,25 @@ def get_update_fields():
         "dean_comments", "dean_signature", "dean_name",
         "dean_date", "faculty_comments", "student_comments"
     ]
+
+    ##Returning the field names to display as options in the update case menu
     return connection_fields
     
 def main():
+
+    #initializing the database
     initialize_database()
+
+    #Displaying the menu until the user wants to exit
+
+    #Collecting user input and creating a new case
     while True: 
         display_menu()
         choice = input("Enter your choice(1-6): ")
 
         match choice: 
+
+            #Searching for records using one of four indentifiers
             case "1": 
                 case_info = collect_case_information()
                 print("\nCollected Case Information")
@@ -109,6 +137,8 @@ def main():
                 for key, value in case_info.items():
                     print(f"{key}:{value}")
                 create_case(case_info)
+
+            #Retrieving and displayng all stored cases
             case "2":
                 search_fields = {
                     "1": "record_id",
@@ -135,6 +165,8 @@ def main():
                         print("No matching records found.")
                 else:
                     print("Invalid search option.")
+
+            #Displaying all records
             case "3": 
                 # print("All Cases")
                 records = display_all_cases()
@@ -144,6 +176,8 @@ def main():
                         print(record)
                 else: 
                     print("Empty Database")
+
+            #Find a record and update the selected field.
             case "4":
                 user_input = int(input("Emter the record ID: "))
 
@@ -209,6 +243,8 @@ def main():
                     print("Record not found.")
 
                 # print("Choose case to update")
+
+            #Delete a selected record after user confirmation.
             case "5":
                 user_input = int(input("Enter record ID: "))
 
@@ -224,6 +260,7 @@ def main():
                     else: 
                         delete_case(user_input)
                 print("Choose case to delete")
+            #Exit the application.
             case "6":
                 print("Goodbye")
                 break
