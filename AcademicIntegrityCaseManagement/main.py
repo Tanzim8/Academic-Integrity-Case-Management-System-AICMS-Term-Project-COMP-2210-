@@ -70,7 +70,7 @@ def collect_case_information():
             if field in required_fields:
                 while not value.strip():
                     print("This field is required")
-                    value = value = input(f"Enter {field.replace('_',' ').title()}: ")
+                    value = input(f"Enter {field.replace('_',' ').title()}: ")
 
             elif value.strip() == "":
                 value = None
