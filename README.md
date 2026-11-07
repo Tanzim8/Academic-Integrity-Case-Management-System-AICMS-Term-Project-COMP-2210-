@@ -1,5 +1,5 @@
 # Academic-Integrity-Case-Management-System-AICMS-Term-Project-COMP-2210-
-ACIMS is the term project I have built with my partner Sapnil Shuva for COMP 2210 course in Thompson Rivers University. 
+ACIMS is the term project I have built with my partner for COMP 2210 course in Thompson Rivers University. 
 
 So far We have managed to complete he part - 1 the backend part of the project using python and sqlite3. 
 
