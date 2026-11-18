@@ -180,12 +180,14 @@ def case_management_menu(user):
                 records = display_all_cases()
                 if user_type == "Student":
                     records = [record for record in records if record[2] == user[0]]
+                if user_type == "Faculty":
+                    records = [record for record in records if record[4] == user[1]]
 
                 if records: 
                     for record in records:
                         print(record)
                 else: 
-                    print("Empty Database")
+                    print("No cases available for your account.")
 
             #Find a record and update the selected field.
             case "4":
