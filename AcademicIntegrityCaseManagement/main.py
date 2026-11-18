@@ -198,6 +198,10 @@ def case_management_menu(user):
                 if records and user_type == "Student" and records[0][2] != user[0]:
                     print("Access Denied! This case does not belong to you.")
                     continue
+                if records and user_type == "Faculty" and records[0][4] != user[1]:
+                    print("Access Denied! This case does not belong to you.")
+                    continue
+
 
                 if records: 
                     print("\nCurrent Record:")
