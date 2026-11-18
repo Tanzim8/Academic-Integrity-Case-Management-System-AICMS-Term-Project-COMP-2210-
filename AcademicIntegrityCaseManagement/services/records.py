@@ -1,4 +1,5 @@
 import sqlite3
+import bcrypt
 
 
 #creating database table if doesnt exists
@@ -53,7 +54,7 @@ def initialize_database():
     #         )
 
     #Table - 1 (users)
-    cursor.execute("DROP TABLE IF EXISTS users")
+    # cursor.execute("DROP TABLE IF EXISTS users")
     cursor.execute(
         """
         CREATE TABLE IF NOT EXISTS users (
@@ -109,17 +110,23 @@ def initialize_database():
 
 
 #Method to register an user in the system
-def register_user(user_id, name, email, department, user_type):
+def register_user(user_id, name, email, department, user_type, username, password):
     connection = sqlite3.connect("data/cases.db")
     cursor = connection.cursor()
 
+    password_hash = bcrypt.haspw(
+        password.encode("utf-8"),
+        bcrypt.gensalt()
+    ).decode("utf-8")
     cursor.execute("""
-        INSERT INTO users(user_id,name,email,department,user_type)
-        VALUES(?, ?, ?, ?, ?),
+        INSERT INTO users(user_id,name,email,department,user_type, username, password)
+        VALUES(?, ?, ?, ?, ?, ?, ?)
         """,
-        (user_id, name, email, department, user_type))
+        (user_id, name, email, department, user_type,username, password))
     connection.commit()
     connection.close()
+
+
 #Inserting a new case in the database using the collected information
 #Generating SQL placeholders dynamically based on the provided fields.
 def create_case(case_info): 
