@@ -114,17 +114,40 @@ def register_user(user_id, name, email, department, user_type, username, passwor
     connection = sqlite3.connect("data/cases.db")
     cursor = connection.cursor()
 
-    password_hash = bcrypt.haspw(
+    password_hash = bcrypt.hashpw(
         password.encode("utf-8"),
         bcrypt.gensalt()
     ).decode("utf-8")
     cursor.execute("""
-        INSERT INTO users(user_id,name,email,department,user_type, username, password)
+        INSERT INTO users(user_id,name,email,department,user_type, username, password_hash)
         VALUES(?, ?, ?, ?, ?, ?, ?)
         """,
-        (user_id, name, email, department, user_type,username, password))
+        (user_id, name, email, department, user_type,username, password_hash))
     connection.commit()
     connection.close()
+
+
+#function to login
+def login_user(username, password):
+    connection = sqlite3.connect("data/cases.db")
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT * FROM users WHERE username = ?""",(username,))
+    record = cursor.fetchone()
+    connection.close()
+    if record is None:
+        return False
+    else:
+        if bcrypt.checkpw(
+            password.encode("utf-8"),
+            record[6].encode("utf-8")
+        ):
+            return record
+        else:
+            return False
+    # connection.close()
+    return record
 
 
 #Inserting a new case in the database using the collected information

@@ -1,4 +1,4 @@
-from services.records import initialize_database,register_user,create_case,search_case, display_all_cases,delete_case,update_case
+from services.records import initialize_database,register_user,login_user,create_case,search_case, display_all_cases,delete_case,update_case
 
 def welcome_menu():
     print("\n====AICMS====")
@@ -145,10 +145,19 @@ def main():
 
                 register_user(id,name, email, dept, user_type, username, password)
                 
-                pass
+                # pass
             case "2": 
                 #login
-                pass
+
+                username = input("Enter your username: ")
+                password = input("Enter your password: ")
+
+                user = login_user(username,password)
+                if user: 
+                    print("Successful login!")
+                else: 
+                    print("invalid user details!")
+                # pass
             case "3":
                 print("Goodbye!")
                 break
