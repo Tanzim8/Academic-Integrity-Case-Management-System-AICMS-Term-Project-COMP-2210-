@@ -127,7 +127,7 @@ def main():
     initialize_database()
 
     #The welcome menu
-    while true:
+    while True:
         welcome_menu()
 
         choice = input("Enter your choice (1-3): ")
