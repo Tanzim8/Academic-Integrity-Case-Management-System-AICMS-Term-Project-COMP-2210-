@@ -53,6 +53,7 @@ def initialize_database():
     #         )
 
     #Table - 1 (users)
+    cursor.execute("DROP TABLE IF EXISTS users")
     cursor.execute(
         """
         CREATE TABLE IF NOT EXISTS users (
@@ -60,7 +61,9 @@ def initialize_database():
             name VARCHAR(50),
             email VARCHAR(25),
             department VARCHAR(35),
-            user_type TEXT
+            user_type TEXT,
+            username TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL
             )
         
         """
@@ -98,9 +101,25 @@ def initialize_database():
             FOREIGN KEY (case_id) REFERENCES ed_case_info(case_id))
     """)
     connection.commit()
+
+    cursor.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
+    print(cursor.fetchall())
     connection.close()
 
 
+
+#Method to register an user in the system
+def register_user(user_id, name, email, department, user_type):
+    connection = sqlite3.connect("data/cases.db")
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        INSERT INTO users(user_id,name,email,department,user_type)
+        VALUES(?, ?, ?, ?, ?),
+        """,
+        (user_id, name, email, department, user_type))
+    connection.commit()
+    connection.close()
 #Inserting a new case in the database using the collected information
 #Generating SQL placeholders dynamically based on the provided fields.
 def create_case(case_info): 
