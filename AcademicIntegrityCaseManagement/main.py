@@ -161,6 +161,8 @@ def case_management_menu(user):
                     value = input(f"Enter {field.replace('_', ' ').title()}: ")
 
                     records = search_case(field, value)
+                    if user_type == "Student":
+                        records = [record for record in records if record[2] == user[0]]
 
                     if records:
                         for record in records:
