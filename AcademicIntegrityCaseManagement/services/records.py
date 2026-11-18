@@ -5,51 +5,98 @@ import sqlite3
 #defining the fields to store academic integrity case reports
 def initialize_database():
     connection = sqlite3.connect("data/cases.db")
+    connection.execute("PRAGMA foreign_keys = ON")
     cursor = connection.cursor()
 
+    # cursor.execute("""
+    #     CREATE TABLE IF NOT EXISTS cases(
+    #         record_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    #         student_name TEXT NOT NULL,
+    #         student_number TEXT NOT NULL,
+    #         student_email TEXT,
+    #         faculty_name TEXT,
+    #         course TEXT,
+    #         report_date TEXT,
+    #         assignment_number TEXT,
+    #         department TEXT,
+    #         semester TEXT,
+    #         violation_description TEXT,
+    #         support_person_advised INTEGER,
+    #         written_statement_advised INTEGER,
+    #         faculty_signature TEXT,
+    #         faculty_signature_date TEXT,
+    #         student_acknowledgement_name TEXT,
+    #         evidence_reviewed INTEGER,
+    #         mytru_email TEXT,
+    #         student_signature TEXT,
+    #         student_signature_date TEXT,
+    #         faculty_followup_signature TEXT,
+    #         faculty_followup_name TEXT,
+    #         faculty_followup_date TEXT,
+    #         chair_agrees INTEGER,
+    #         chair_comments TEXT,
+    #         chair_signature TEXT,
+    #         chair_name TEXT,
+    #         chair_date TEXT,
+
+    #         dean_agrees INTEGER,
+    #         dean_comments TEXT,
+    #         dean_signature TEXT,
+    #         dean_name TEXT,
+    #         dean_date TEXT,
+
+    #         faculty_comments TEXT,
+
+    #         student_comments TEXT
+    #         )
+    #         """
+    #         )
+
+    #Table - 1 (users)
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS users (
+            user_id VARCHAR(10) PRIMARY KEY,
+            name VARCHAR(50),
+            email VARCHAR(25),
+            department VARCHAR(35),
+            user_type TEXT
+            )
+        
+        """
+    )
+
+    #Table - 2 (Case Info)
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS cases(
-            record_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            student_name TEXT NOT NULL,
-            student_number TEXT NOT NULL,
-            student_email TEXT,
-            faculty_name TEXT,
-            course TEXT,
-            report_date TEXT,
-            assignment_number TEXT,
-            department TEXT,
-            semester TEXT,
-            violation_description TEXT,
-            support_person_advised INTEGER,
-            written_statement_advised INTEGER,
-            faculty_signature TEXT,
-            faculty_signature_date TEXT,
-            student_acknowledgement_name TEXT,
-            evidence_reviewed INTEGER,
-            mytru_email TEXT,
-            student_signature TEXT,
-            student_signature_date TEXT,
-            faculty_followup_signature TEXT,
-            faculty_followup_name TEXT,
-            faculty_followup_date TEXT,
-            chair_agrees INTEGER,
+        CREATE TABLE IF NOT EXISTS ed_case_info(
+            case_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_id VARCHAR(10),
+            faculty_id VARCHAR(10),
+            chair_id VARCHAR(10),
+            dean_id VARCHAR(10),
+            term TEXT,
+            assignment_number VARCHAR(10),
+            ed_violation_description TEXT,
+            violation_date TEXT,
+
+            FOREIGN KEY (student_id) REFERENCES users(user_id),
+            FOREIGN KEY (faculty_id) REFERENCES users(user_id),
+            FOREIGN KEY (chair_id) REFERENCES users(user_id),
+            FOREIGN KEY (dean_id) REFERENCES users(user_id)
+            )
+    """)
+
+    #Table - 3 (Case Comments)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS ed_case_comments (
+            case_id INTEGER PRIMARY KEY,
             chair_comments TEXT,
-            chair_signature TEXT,
-            chair_name TEXT,
-            chair_date TEXT,
-
-            dean_agrees INTEGER,
             dean_comments TEXT,
-            dean_signature TEXT,
-            dean_name TEXT,
-            dean_date TEXT,
-
             faculty_comments TEXT,
-
-            student_comments TEXT
-            )
-            """
-            )
+            student_comments TEXT,
+            
+            FOREIGN KEY (case_id) REFERENCES ed_case_info(case_id))
+    """)
     connection.commit()
     connection.close()
 
