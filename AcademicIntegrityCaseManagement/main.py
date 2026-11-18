@@ -121,7 +121,9 @@ def get_update_fields():
     ##Returning the field names to display as options in the update case menu
     return connection_fields
 
-def case_management_menu():
+def case_management_menu(user):
+    user_type = user[4]
+    print("Logged in as: ", user_type)
     while True: 
         display_menu()
         choice = input("Enter your choice(1-6): ")
@@ -302,7 +304,7 @@ def main():
                 user = login_user(username,password)
                 if user: 
                     print("Successful login!")
-                    case_management_menu()
+                    case_management_menu(user)
                 else: 
                     print("invalid user details!")
                 # pass
