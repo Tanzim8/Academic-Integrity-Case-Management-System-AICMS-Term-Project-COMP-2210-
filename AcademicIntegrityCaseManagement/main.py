@@ -15,7 +15,7 @@ def display_menu():
     print("3. Display All Cases")
     print("4. Update Case")
     print("5. Delete Case")
-    print("6. Exit")
+    print("6. Logout")
 
 #Method to collect information for a new academic integrity case
 #Required first 10 fields must be completed th eoptional fields can be left blank
