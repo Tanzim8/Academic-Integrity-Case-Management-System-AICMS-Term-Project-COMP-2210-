@@ -1,4 +1,10 @@
-from services.records import initialize_database,create_case,search_case, display_all_cases,delete_case,update_case
+from services.records import initialize_database,register_user,create_case,search_case, display_all_cases,delete_case,update_case
+
+def welcome_menu():
+    print("\n====AICMS====")
+    print("1. Register")
+    print("2. Login")
+    print("3. Exit")
 
 
 #Method to display the main menu
@@ -120,8 +126,37 @@ def main():
     #initializing the database
     initialize_database()
 
+    #The welcome menu
+    while true:
+        welcome_menu()
+
+        choice = input("Enter your choice (1-3): ")
+
+        match choice: 
+            case "1": 
+                #register
+                id = input("Enter your id: ")
+                name = input("Enter your name: ")
+                email = input("Enter your email: ")
+                dept = input("Enter your department: ")
+                user_type = input("Enter your position: ")
+                username = input("Enter the username you want for the system: ")
+                password = input("Enter your unique password: ")
+
+                register_user(id,name, email, dept, user_type, username, password)
+                
+                pass
+            case "2": 
+                #login
+                pass
+            case "3":
+                print("Goodbye!")
+                break
+            case _:
+                print("Invalid choice!")
     #Displaying the menu until the user wants to exit
 
+    
     #Collecting user input and creating a new case
     while True: 
         display_menu()
