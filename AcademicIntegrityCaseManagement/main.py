@@ -186,6 +186,10 @@ def case_management_menu(user):
                 user_input = int(input("Emter the record ID: "))
 
                 records = search_case("record_id",user_input)
+                
+                if records and user_type == "Student" and records[0][2] != user[0]:
+                    print("Access Denied! This case does not belong to you.")
+                    continue
 
                 if records: 
                     print("\nCurrent Record:")
@@ -236,6 +240,13 @@ def case_management_menu(user):
 
                     if field_choice in fields: 
                         field = fields[field_choice]
+
+                        if user_type == "Student" and field != "student_comments":
+                            print("Access Denied! Students can only update their comments.")
+                            continue
+                        if user_type == "Faculty" and field == "student_comments":
+                            print("Access Denied! Faculty cannot update student comments.")
+                            continue
                         new_value = input(f"Enter new{field}: ")
 
                         update_case(user_input,field,new_value)
