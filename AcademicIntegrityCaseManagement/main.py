@@ -250,20 +250,24 @@ def case_management_menu(user):
 
             #Delete a selected record after user confirmation.
             case "5":
-                user_input = int(input("Enter record ID: "))
+                if user_type == "Admin":
+                    user_input = int(input("Enter record ID: "))
 
-                records = search_case("record_id", user_input)
+                    records = search_case("record_id", user_input)
 
-                if records:
-                    print("To Delete: ")
-                    for record in records: 
-                        print(record)
-                    user_confirmation = int(input("Press 1 to confirm deletion: "))
-                    if user_confirmation != 1:
+                    if records:
+                        print("To Delete: ")
+                        for record in records: 
+                            print(record)
                         user_confirmation = int(input("Press 1 to confirm deletion: "))
-                    else: 
-                        delete_case(user_input)
-                print("Choose case to delete")
+                        if user_confirmation == 1:
+                           delete_case(user_input)
+                           print("Case deleted successfully!")
+                        else: 
+                            print("Deletion cancelled.")
+                elif user_type == "Student" or user_type == "Faculty":
+                    print("You are not allowed to delete cases!")
+                    # print("Choose case to delete")
             #Exit the application.
             case "6":
                 print("Goodbye")
