@@ -164,6 +164,8 @@ def case_management_menu(user):
 
                     if records:
                         for record in records:
+                            if user_type == "Student" and record[2] != user[0]:
+                                continue
                             print(record)
                     else:
                         print("No matching records found.")
@@ -186,7 +188,7 @@ def case_management_menu(user):
                 user_input = int(input("Emter the record ID: "))
 
                 records = search_case("record_id",user_input)
-                
+
                 if records and user_type == "Student" and records[0][2] != user[0]:
                     print("Access Denied! This case does not belong to you.")
                     continue
