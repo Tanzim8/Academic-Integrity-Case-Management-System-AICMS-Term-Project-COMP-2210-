@@ -132,12 +132,15 @@ def case_management_menu(user):
 
             #Searching for records using one of four indentifiers
             case "1": 
-                case_info = collect_case_information()
-                print("\nCollected Case Information")
-                # print("New Case creation")
-                for key, value in case_info.items():
-                    print(f"{key}:{value}")
-                create_case(case_info)
+                if user_type == "Faculty" or user_type == "Admin":
+                    case_info = collect_case_information()
+                    print("\nCollected Case Information")
+                    # print("New Case creation")
+                    for key, value in case_info.items():
+                        print(f"{key}:{value}")
+                    create_case(case_info)
+                else: 
+                    print("Access Denied!")
 
             #Retrieving and displayng all stored cases
             case "2":
