@@ -57,6 +57,72 @@ def initialize_database():
             
             FOREIGN KEY (case_id) REFERENCES ed_case_info(case_id))
     """)
+
+
+    # Table 4 - Case Acknowledgements
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS ed_case_acknowledgements (
+            case_id INTEGER PRIMARY KEY,
+
+            support_person_advised INTEGER,
+            written_statement_advised INTEGER,
+
+            faculty_signature TEXT,
+            faculty_signature_date TEXT,
+
+            student_acknowledgement_name TEXT,
+            evidence_reviewed INTEGER,
+            mytru_email TEXT,
+            student_signature TEXT,
+            student_signature_date TEXT,
+
+            faculty_followup_signature TEXT,
+            faculty_followup_name TEXT,
+            faculty_followup_date TEXT,
+
+            FOREIGN KEY (case_id)
+                REFERENCES ed_case_info(case_id)
+        )
+    """)
+
+    # Table 5 - Chair and Dean Reviews
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS ed_case_reviews (
+            case_id INTEGER PRIMARY KEY,
+
+            chair_agrees INTEGER,
+            chair_signature TEXT,
+            chair_date TEXT,
+
+            dean_agrees INTEGER,
+            dean_signature TEXT,
+            dean_date TEXT,
+
+            FOREIGN KEY (case_id)
+                REFERENCES ed_case_info(case_id)
+        )
+    """)
+
+    # Add missing columns to existing case information table
+    cursor.execute("PRAGMA table_info(ed_case_info)")
+    existing_columns = {
+        column[1] for column in cursor.fetchall()
+    }
+
+    new_columns = {
+        "course": "TEXT",
+        "report_date": "TEXT",
+        "case_department": "TEXT",
+        "recommended_sanction": "TEXT"
+    }
+
+    for column_name, column_type in new_columns.items():
+        if column_name not in existing_columns:
+            cursor.execute(
+                f"ALTER TABLE ed_case_info "
+                f"ADD COLUMN {column_name} {column_type}"
+            )
+
     connection.commit()
 
     cursor.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
@@ -147,6 +213,16 @@ def create_ed_case(case_info):
     cursor.execute("""
             INSERT INTO ed_case_comments(case_id)
             VALUES(?)""",(case_id,))
+
+    cursor.execute("""
+        INSERT INTO ed_case_acknowledgements(case_id)
+        VALUES(?)
+    """, (case_id,))
+
+    cursor.execute("""
+        INSERT INTO ed_case_reviews(case_id)
+        VALUES(?)
+    """, (case_id,))
     connection.commit()
     connection.close()
     return case_id
@@ -229,6 +305,15 @@ def delete_ed_case(case_id):
     cursor.execute(
         "DELETE FROM ed_case_comments WHERE case_id = ?",(case_id,)
     )
+    cursor.execute(
+    "DELETE FROM ed_case_acknowledgements WHERE case_id = ?",
+    (case_id,)
+)
+
+    cursor.execute(
+    "DELETE FROM ed_case_reviews WHERE case_id = ?",
+    (case_id,)
+)
     cursor.execute(
         "DELETE FROM ed_case_info WHERE case_id = ?",(case_id,))
 
