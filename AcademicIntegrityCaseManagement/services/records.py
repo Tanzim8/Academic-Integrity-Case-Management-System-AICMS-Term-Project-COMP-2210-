@@ -111,6 +111,9 @@ def initialize_database():
 
 #Method to register an user in the system
 def register_user(user_id, name, email, department, user_type, username, password):
+    if user_type not in ["Student", "Faculty"]:
+        print("Registration denied! Invalid role.")
+        return False
     connection = sqlite3.connect("data/cases.db")
     cursor = connection.cursor()
 
@@ -125,6 +128,7 @@ def register_user(user_id, name, email, department, user_type, username, passwor
         (user_id, name, email, department, user_type,username, password_hash))
     connection.commit()
     connection.close()
+    return True
 
 
 #function to login
