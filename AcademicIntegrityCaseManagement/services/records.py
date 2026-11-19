@@ -153,6 +153,48 @@ def login_user(username, password):
     # connection.close()
 
 
+def create_ed_case(case_info): 
+    connection = sqlite3.connect("data/cases.db")
+    cursor = connection.cursor()
+
+    student_id = case_info["student_id"]
+    faculty_id = case_info["faculty_id"]
+    term = case_info["term"]
+    chair_id = case_info.get("chair_id")
+    dean_id = case_info.get("dean_id")
+    assignment_number = case_info["assignment_number"]
+    ed_violation_description = case_info["ed_violation_description"]
+    violation_date = case_info["violation_date"]
+
+    cursor.execute("""
+            INSERT INTO ed_case_info(
+            student_id,
+            faculty_id,
+            term,
+            chair_id,
+            dean_id,
+            assignment_number,
+            ed_violation_description,
+            violation_date)
+            values(?,?,?,?,?,?,?,?)""",
+            (
+                student_id,
+                faculty_id,
+                term,
+                chair_id,
+                dean_id,
+                assignment_number,
+                ed_violation_description,
+                violation_date
+                ))
+    case_id = cursor.lastrowid
+    cursor.execute("""
+            INSERT INTO ed_case_comments(case_id)
+            VALUES(?)""",(case_id,))
+    connection.commit()
+    connection.close()
+    return case_id
+
 
 #Inserting a new case in the database using the collected information
 #Generating SQL placeholders dynamically based on the provided fields.
