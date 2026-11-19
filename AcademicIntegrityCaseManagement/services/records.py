@@ -218,21 +218,28 @@ def search_ed_case(case_id):
 
     return record
 
+
 def update_ed_case(case_id, field, new_value):
     connection = sqlite3.connect("data/cases.db")
     cursor = connection.cursor()
 
     allowed_fields = [
         "term",
-        "assignment_description",
+        "assignment_number",
         "ed_violation_description"
     ]
     if field not in allowed_fields:
         print("Invalid field! Update denied")
+        connection.close()
         return False
     cursor.execute(
         f"UPDATE ed_case_info SET {field} = ? WHERE case_id = ?",(new_value, case_id)
     )
+
+    updated = cursor.rowcount > 0
+    connection.commit()
+    connection.close()
+    return updated
 
 
 
