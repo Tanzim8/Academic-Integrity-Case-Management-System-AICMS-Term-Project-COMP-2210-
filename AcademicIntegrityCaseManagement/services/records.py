@@ -195,6 +195,24 @@ def create_ed_case(case_info):
     connection.close()
     return case_id
 
+def search_ed_case(case_id): 
+    connection = sqlite3.connect("data/cases.db")
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """
+        SELECT * FROM ed_case_info 
+        LEFT JOIN ed_case_comments
+        ON ed_case_info.case_id = ed_case_comments.case_id
+        WHERE ed_case_info.case_id = ?
+        """,(case_id,)
+    )
+
+    record = cursor.fetchone()
+    connection.close()
+
+    return record
+
 
 #Inserting a new case in the database using the collected information
 #Generating SQL placeholders dynamically based on the provided fields.
