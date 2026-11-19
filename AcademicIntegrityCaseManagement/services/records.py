@@ -241,6 +241,49 @@ def update_ed_case(case_id, field, new_value):
     connection.close()
     return updated
 
+def update_ed_comments(case_id, field, new_value):
+    connection = sqlite3.connect("data/cases.db")
+    cursor = connection.cursor()
+
+    allowed_fields = [
+        "chair_comments",
+        "dean_comments",
+        "faculty_comments",
+        "student_comments"
+    ]
+
+    if field not in allowed_fields: 
+        print("Invalid field! Update denied.")
+        connection.close()
+        return False
+    cursor.execute(
+        f"UPDATE ed_case_comments SET {field} = ? WHERE case_id = ?",(new_value,case_id)
+    )
+
+    updated = cursor.rowcount > 0
+
+    connection.commit()
+    connection.close()
+    return updated
+
+def delete_ed_case(case_id):
+    connection = sqlite3.connect("data/cases.db")
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "DELETE FROM ed_case_comments WHERE case_id = ?",(case_id,)
+    )
+    cursor.execute(
+        "DELETE FROM ed_case_info WHERE case_id = ?",(case_id,))
+
+    deleted = cursor.rowcount > 0
+
+
+    connection.commit()
+    connection.close()
+
+    return deleted
+
 
 
 #Inserting a new case in the database using the collected information
