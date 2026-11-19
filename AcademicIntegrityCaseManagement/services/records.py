@@ -147,7 +147,7 @@ def login_user(username, password):
         else:
             return False
     # connection.close()
-    return record
+
 
 
 #Inserting a new case in the database using the collected information

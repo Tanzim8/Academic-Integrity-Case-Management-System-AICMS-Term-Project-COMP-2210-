@@ -318,7 +318,12 @@ def main():
                 name = input("Enter your name: ")
                 email = input("Enter your email: ")
                 dept = input("Enter your department: ")
-                user_type = input("Enter your position: ")
+
+                user_type = input("Enter your role (Student/Faculty): ").strip().title()
+                if user_type not in ["Student","Faculty"]:
+                    print("Invalid role! Only Student and Faculty can register.")
+                    continue
+                
                 username = input("Enter the username you want for the system: ")
                 password = input("Enter your unique password: ")
 
