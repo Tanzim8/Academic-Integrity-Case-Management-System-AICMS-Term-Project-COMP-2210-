@@ -201,7 +201,12 @@ def search_ed_case(case_id):
 
     cursor.execute(
         """
-        SELECT * FROM ed_case_info 
+        SELECT ed_case_info.*,
+        ed_case_comments.chair_comments,
+        ed_case_comments.dean_comments,
+        ed_case_comments.faculty_comments,
+        ed_case_comments.student_comments
+        FROM ed_case_info 
         LEFT JOIN ed_case_comments
         ON ed_case_info.case_id = ed_case_comments.case_id
         WHERE ed_case_info.case_id = ?
@@ -212,6 +217,23 @@ def search_ed_case(case_id):
     connection.close()
 
     return record
+
+def update_ed_case(case_id, field, new_value):
+    connection = sqlite3.connect("data/cases.db")
+    cursor = connection.cursor()
+
+    allowed_fields = [
+        "term",
+        "assignment_description",
+        "ed_violation_description"
+    ]
+    if field not in allowed_fields:
+        print("Invalid field! Update denied")
+        return False
+    cursor.execute(
+        f"UPDATE ed_case_info SET {field} = ? WHERE case_id = ?",(new_value, case_id)
+    )
+
 
 
 #Inserting a new case in the database using the collected information
