@@ -284,6 +284,18 @@ def delete_ed_case(case_id):
 
     return deleted
 
+def search_student_cases(student_id):
+    connection = sqlite3.connect("data/cases.db")
+    cursor = connection.cursor()
+
+    cursor.execute(
+        "SELECT * FROM ed_case_info WHERE student_id = ?",(student_id,)
+    )
+    record = cursor.fetchall()
+
+    connection.close()
+    return record
+
 
 
 #Inserting a new case in the database using the collected information

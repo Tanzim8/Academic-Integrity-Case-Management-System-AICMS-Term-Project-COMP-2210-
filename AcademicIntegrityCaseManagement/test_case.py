@@ -12,7 +12,7 @@
 # case_id = create_ed_case(case_info)
 
 # print("Case created successfully! Case ID:", case_id)
-from services.records import search_ed_case,update_ed_case,update_ed_comments,delete_ed_case
+from services.records import search_ed_case,update_ed_case,update_ed_comments,delete_ed_case, search_student_cases
 
 record = search_ed_case(1)
 
@@ -44,3 +44,12 @@ result = delete_ed_case(case_id)
 
 print("Deletion successful:", result)
 print("After deletion:", search_ed_case(case_id))
+
+student_id = "T00716893"
+
+records = search_student_cases(student_id)
+
+print("Total cases found:", len(records))
+
+for record in records:
+    print(record)
