@@ -12,7 +12,7 @@
 # case_id = create_ed_case(case_info)
 
 # print("Case created successfully! Case ID:", case_id)
-from services.records import search_ed_case,update_ed_case,update_ed_comments
+from services.records import search_ed_case,update_ed_case,update_ed_comments,delete_ed_case
 
 record = search_ed_case(1)
 
@@ -35,3 +35,12 @@ resultUpdate = update_ed_comments(
 
 print("Comment updated:", resultUpdate)
 print(search_ed_case(1))
+
+case_id = 17
+
+print("Before deletion:", search_ed_case(case_id))
+
+result = delete_ed_case(case_id)
+
+print("Deletion successful:", result)
+print("After deletion:", search_ed_case(case_id))
