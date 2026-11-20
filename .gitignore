@@ -1,0 +1,11 @@
+.vs/
+bin/
+obj/
+*.user
+*.suo
+__pycache__/
+*.pyc
+.venv/
+*.db-journal
+*.db-wal
+*.db-shm
