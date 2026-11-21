@@ -35,6 +35,25 @@ def main():
 			username = request.get("username", "")
 			password = request.get("password", "")
 
+			if not all(
+				isinstance(value, str) and value.strip()
+				for value in [
+					user_id, name, email, department,
+					user_type, username, password
+				]
+			):
+				print(json.dumps({
+					"success": False,
+					"message": "All fields are required."
+				}))
+				return
+
+			if user_type not in ["Student", "Faculty"]:
+				print(json.dumps({
+					"success": False,
+					"message": "Invalid user type."
+				}))
+				return
 			try:
 				registered = register_user(
 					user_id,
