@@ -77,7 +77,6 @@
             lblPassword.Size = new Size(57, 15);
             lblPassword.TabIndex = 4;
             lblPassword.Text = "password";
-            lblPassword.Click += label3_Click;
             // 
             // btnLogin
             // 
@@ -87,6 +86,7 @@
             btnLogin.TabIndex = 5;
             btnLogin.Text = "Log In";
             btnLogin.UseVisualStyleBackColor = true;
+            btnLogin.Click += btnLogin_Click;
             // 
             // btnRegister
             // 
@@ -101,7 +101,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(542, 299);
+            ClientSize = new Size(451, 276);
             Controls.Add(btnRegister);
             Controls.Add(btnLogin);
             Controls.Add(lblPassword);
