@@ -1,7 +1,8 @@
 import json
 import sys
+import sqlite3
 
-from services.records import login_user
+from services.records import login_user, register_user
 
 def main():
 	try: 
@@ -23,6 +24,43 @@ def main():
 				response = {
 					"success": False,
 					"message": "Invalid username or password."
+			
+				}
+		elif request.get("action") == "register":
+			user_id = request.get("user_id", "")
+			name = request.get("name", "")
+			email = request.get("email", "")
+			department = request.get("department", "")
+			user_type = request.get("user_type", "")
+			username = request.get("username", "")
+			password = request.get("password", "")
+
+			try:
+				registered = register_user(
+					user_id,
+					name,
+					email,
+					department,
+					user_type,
+					username,
+					password
+				)
+
+				if registered:
+					response = {
+						"success": True,
+						"message": "Registration successful!"
+					}
+				else:
+					response = {
+						"success": False,
+						"message": "Registration failed."
+					}
+
+			except sqlite3.IntegrityError:
+				response = {
+					"success": False,
+					"message": "User ID or username already exists, or a database constraint was violated."
 				}
 		else:
 			response = {
