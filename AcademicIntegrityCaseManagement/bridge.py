@@ -2,7 +2,7 @@ import json
 import sys
 import sqlite3
 
-from services.records import login_user, register_user
+from services.records import (login_user, register_user, search_student_cases)
 
 def main():
 	try: 
@@ -81,6 +81,14 @@ def main():
 					"success": False,
 					"message": "User ID or username already exists, or a database constraint was violated."
 				}
+		elif request.get("action") == "student_cases":
+					student_id = request.get("student_id", "")
+					records = search_student_cases(student_id)
+
+					response = {
+						"success": True,
+						"cases": records
+					}
 		else:
 			response = {
 				"success": False,

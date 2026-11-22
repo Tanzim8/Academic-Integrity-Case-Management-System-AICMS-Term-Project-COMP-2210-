@@ -106,6 +106,7 @@
             btnRefresh.TabIndex = 6;
             btnRefresh.Text = "Refresh";
             btnRefresh.UseVisualStyleBackColor = true;
+            btnRefresh.Click += btnRefresh_Click;
             // 
             // btnViewDetails
             // 
@@ -132,7 +133,7 @@
             Name = "StudentDashboard";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "AICMS - Student Dashboard";
-            Load += this.StudentDashboard_Load;
+            Load += StudentDashboard_Load;
             ((System.ComponentModel.ISupportInitialize)dvgCases).EndInit();
             ResumeLayout(false);
             PerformLayout();

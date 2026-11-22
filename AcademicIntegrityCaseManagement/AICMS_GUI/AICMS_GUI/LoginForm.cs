@@ -88,17 +88,18 @@ namespace AICMS_GUI
                 bool success = result.RootElement
                     .GetProperty("success").GetBoolean();
 
-                if (success)
-                {
-                    string name = result.RootElement
-                        .GetProperty("name").GetString() ?? "";
+                //if (success)
+                //{
+                //    string name = result.RootElement
+                //        .GetProperty("name").GetString() ?? "";
 
-                    string role = result.RootElement
-                        .GetProperty("role").GetString() ?? "";
+                //    string role = result.RootElement
+                //        .GetProperty("role").GetString() ?? "";
 
-                    MessageBox.Show("Welcome " + name +
-                                    "\nRole: " + role);
-                }
+                //    MessageBox.Show("Welcome " + name +
+                //                    "\nRole: " + role);
+                //}
+
                 else
                 {
                     string message = result.RootElement
