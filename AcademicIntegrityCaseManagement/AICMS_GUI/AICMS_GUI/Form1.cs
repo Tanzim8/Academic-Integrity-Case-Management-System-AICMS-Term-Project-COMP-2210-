@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
+using System.Text.Json;
 
 namespace AICMS_GUI
 {
@@ -32,7 +34,7 @@ namespace AICMS_GUI
             this.Close();
         }
 
-        private void btnRegister_Click(object sender, EventArgs e)
+        private async void btnRegister_Click(object sender, EventArgs e)
         {
             string userId = txtUserId.Text.Trim();
             string fullName = txtFullName.Text.Trim();
@@ -62,9 +64,82 @@ namespace AICMS_GUI
                 MessageBox.Show("Please select a valid user type.");
                 return;
             }
-            MessageBox.Show("Registration successful!");
-        }
+            //MessageBox.Show("Registration successful!");
+            var registrationData = new
+            {
+                action = "register",
+                user_id = userId,
+                name = fullName,
+                email = email,
+                department = department,
+                user_type = userType,
+                username = username,
+                password = password
+            };
 
+            string request = System.Text.Json.JsonSerializer.Serialize(registrationData);
+            btnRegister.Enabled = false;
+
+            try
+            {
+                string backendPath =
+                    @"C:\Users\user\source\repos\Academic-Integrity-Case-Management-System-AICMS-Term-Project-COMP-2210-\AcademicIntegrityCaseManagement";
+
+                ProcessStartInfo psi = new ProcessStartInfo();
+
+                psi.FileName = @"C:\Python314\python.exe";
+                psi.Arguments = "bridge.py";
+                psi.WorkingDirectory = backendPath;
+
+                psi.UseShellExecute = false;
+                psi.RedirectStandardInput = true;
+                psi.RedirectStandardOutput = true;
+                psi.RedirectStandardError = true;
+                psi.CreateNoWindow = true;
+
+                using Process process = Process.Start(psi)!;
+
+                await process.StandardInput.WriteLineAsync(request);
+                process.StandardInput.Close();
+
+                var outputTask = process.StandardOutput.ReadToEndAsync();
+                var errorTask = process.StandardError.ReadToEndAsync();
+
+                await process.WaitForExitAsync();
+
+                string response = await outputTask;
+                string error = await errorTask;
+
+                if (process.ExitCode != 0)
+                {
+                    MessageBox.Show("Python error: " + error);
+                    return;
+                }
+
+                using JsonDocument result = JsonDocument.Parse(response);
+
+                bool success = result.RootElement
+                    .GetProperty("success").GetBoolean();
+
+                string message = result.RootElement
+                    .GetProperty("message").GetString() ?? "";
+
+                MessageBox.Show(message);
+
+                if (success)
+                {
+                    this.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+            finally
+            {
+                btnRegister.Enabled = true;
+            }
+        }
         private void txtPassword_TextChanged(object sender, EventArgs e)
         {
             

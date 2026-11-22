@@ -82,7 +82,7 @@ namespace AICMS_GUI
                     MessageBox.Show("Python error: " + error);
                     return;
                 }
-                
+
                 using JsonDocument result = JsonDocument.Parse(response);
 
                 bool success = result.RootElement
@@ -117,6 +117,10 @@ namespace AICMS_GUI
             }
         }
 
-
+        private void btnRegister_Click(object sender, EventArgs e)
+        {
+            RegistraterForm registerForm = new RegistraterForm();
+            registerForm.ShowDialog();
+        }
     }
 }
