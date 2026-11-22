@@ -13,6 +13,7 @@ namespace AICMS_GUI
             ApplicationConfiguration.Initialize();
             Application.Run(new LoginForm());
             //Application.Run(new RegistraterForm());
+            //Application.Run(new StudentDashboard());
         }
     }
 }
