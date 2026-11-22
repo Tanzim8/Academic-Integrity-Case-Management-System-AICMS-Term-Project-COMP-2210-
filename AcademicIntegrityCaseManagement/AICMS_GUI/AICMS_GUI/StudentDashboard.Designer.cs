@@ -117,6 +117,7 @@
             btnViewDetails.TabIndex = 7;
             btnViewDetails.Text = "View Details";
             btnViewDetails.UseVisualStyleBackColor = true;
+            btnViewDetails.Click += btnViewDetails_Click;
             // 
             // StudentDashboard
             // 

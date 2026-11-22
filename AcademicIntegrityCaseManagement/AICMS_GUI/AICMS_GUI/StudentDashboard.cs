@@ -137,5 +137,18 @@ namespace AICMS_GUI
         {
             this.Close();
         }
+
+        private void btnViewDetails_Click(object sender, EventArgs e)
+        {
+            if(dvgCases.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a case to view details.");
+                return;
+            }
+
+            string caseId = dvgCases.SelectedRows[0].Cells["Case ID"].Value?.ToString() ?? "";
+
+            MessageBox.Show("Selected Case ID: " + caseId);
+        }
     }
 }
