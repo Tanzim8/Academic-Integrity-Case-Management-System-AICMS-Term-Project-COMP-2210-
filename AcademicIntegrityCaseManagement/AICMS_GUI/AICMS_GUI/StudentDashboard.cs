@@ -128,9 +128,14 @@ namespace AICMS_GUI
             }
         }
 
-        private async Task btnRefresh_Click(object sender, EventArgs e)
+        private async void btnRefresh_Click(object sender, EventArgs e)
         {
             await LoadStudentCases();
+        }
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

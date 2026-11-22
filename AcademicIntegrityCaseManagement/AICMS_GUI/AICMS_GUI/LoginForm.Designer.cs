@@ -115,6 +115,7 @@
             Name = "LoginForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "AICMS - Login";
+            Load += LoginForm_Load;
             ResumeLayout(false);
             PerformLayout();
         }

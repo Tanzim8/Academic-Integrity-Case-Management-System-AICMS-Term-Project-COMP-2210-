@@ -1,5 +1,8 @@
+
+using System;
 using System.Diagnostics;
 using System.Text.Json;
+using System.Windows.Forms;
 
 namespace AICMS_GUI
 {
@@ -10,21 +13,6 @@ namespace AICMS_GUI
             InitializeComponent();
             txtPassword.UseSystemPasswordChar = true;
         }
-
-        //private void btnLogin_Click(object sender, EventArgs e)
-        //{
-        //    string username = txtUsername.Text;
-        //    string password = txtPassword.Text;
-
-        //    if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
-        //    {
-        //        MessageBox.Show("Please enter username and password.");
-        //        return;
-        //    }
-
-        //    MessageBox.Show("Login button working!");
-        //}
-
 
         private async void btnLogin_Click(object sender, EventArgs e)
         {
@@ -88,22 +76,46 @@ namespace AICMS_GUI
                 bool success = result.RootElement
                     .GetProperty("success").GetBoolean();
 
-                //if (success)
-                //{
-                //    string name = result.RootElement
-                //        .GetProperty("name").GetString() ?? "";
+                if (success)
+                {
+                    string userId = result.RootElement
+                        .GetProperty("user_id").GetString() ?? "";
 
-                //    string role = result.RootElement
-                //        .GetProperty("role").GetString() ?? "";
+                    string name = result.RootElement
+                        .GetProperty("name").GetString() ?? "";
 
-                //    MessageBox.Show("Welcome " + name +
-                //                    "\nRole: " + role);
-                //}
+                    string role = result.RootElement
+                        .GetProperty("role").GetString() ?? "";
 
+                    if (role == "Student")
+                    {
+                        StudentDashboard dashboard =
+                            new StudentDashboard(userId, name);
+
+                        this.Hide();
+                        try
+                        {
+                            dashboard.ShowDialog();
+                        }
+                        finally
+                        {
+                            this.Show();
+                            txtPassword.Clear();
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show(
+                            "Welcome " + name +
+                            "\nRole: " + role
+                        );
+                    }
+                }
                 else
                 {
                     string message = result.RootElement
-                        .GetProperty("message").GetString() ?? "";
+                        .GetProperty("message").GetString()
+                        ?? "Invalid username or password.";
 
                     MessageBox.Show(message);
                 }
@@ -122,6 +134,10 @@ namespace AICMS_GUI
         {
             RegistraterForm registerForm = new RegistraterForm();
             registerForm.ShowDialog();
+        }
+
+        private void LoginForm_Load(object sender, EventArgs e)
+        {
         }
     }
 }
