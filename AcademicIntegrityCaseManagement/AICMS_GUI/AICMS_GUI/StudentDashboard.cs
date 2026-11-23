@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Text.Json;
+using System.IO;    
 
 namespace AICMS_GUI
 {
@@ -41,12 +42,31 @@ namespace AICMS_GUI
 
             try
             {
-                string backendPath =
-                    @"C:\Users\user\source\repos\Academic-Integrity-Case-Management-System-AICMS-Term-Project-COMP-2210-\AcademicIntegrityCaseManagement";
+                //string backendPath =
+                //    @"C:\Users\user\source\repos\Academic-Integrity-Case-Management-System-AICMS-Term-Project-COMP-2210-\AcademicIntegrityCaseManagement";
+
+                string backendPath = Path.GetFullPath(
+                    Path.Combine(
+                        AppContext.BaseDirectory,
+                        "..", "..", "..", "..", ".."
+                    )
+                );
 
                 ProcessStartInfo psi = new ProcessStartInfo();
 
-                psi.FileName = @"C:\Python314\python.exe";
+                //psi.FileName = @"C:\Python314\python.exe";
+                string pythonPath = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "Programs", "Python", "Python314", "python.exe"
+                );
+
+                if (!File.Exists(pythonPath))
+                {
+                    pythonPath = @"C:\Python314\python.exe";
+                }
+
+                psi.FileName = pythonPath;
+
                 psi.Arguments = "bridge.py";
                 psi.WorkingDirectory = backendPath;
 

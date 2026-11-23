@@ -30,12 +30,34 @@ namespace AICMS_GUI
 
             try
             {
-                string backendPath =
-                    @"C:\Users\user\source\repos\Academic-Integrity-Case-Management-System-AICMS-Term-Project-COMP-2210-\AcademicIntegrityCaseManagement";
+                //string backendPath =
+                //    @"C:\Users\user\source\repos\Academic-Integrity-Case-Management-System-AICMS-Term-Project-COMP-2210-\AcademicIntegrityCaseManagement";
+
+                string backendPath = Path.GetFullPath(
+                    Path.Combine(
+                        AppContext.BaseDirectory,
+                        "..", "..", "..", "..", ".."
+                    )
+                );
+
+                //MessageBox.Show(backendPath);
 
                 ProcessStartInfo psi = new ProcessStartInfo();
 
-                psi.FileName = @"C:\Python314\python.exe";
+                //psi.FileName = @"C:\Python314\python.exe";
+                //psi.Arguments = "bridge.py";
+                //psi.WorkingDirectory = backendPath;
+                string pythonPath = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "Programs", "Python", "Python314", "python.exe"
+                );
+
+                if (!File.Exists(pythonPath))
+                {
+                    pythonPath = @"C:\Python314\python.exe";
+                }
+
+                psi.FileName = pythonPath;
                 psi.Arguments = "bridge.py";
                 psi.WorkingDirectory = backendPath;
 
@@ -44,6 +66,12 @@ namespace AICMS_GUI
                 psi.RedirectStandardOutput = true;
                 psi.RedirectStandardError = true;
                 psi.CreateNoWindow = true;
+
+                if (!File.Exists(Path.Combine(backendPath, "bridge.py")))
+                {
+                    MessageBox.Show("bridge.py was not found in the backend folder.");
+                    return;
+                }
 
                 using Process process = Process.Start(psi)!;
 
