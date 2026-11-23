@@ -89,12 +89,12 @@
             txtViolation.Name = "txtViolation";
             txtViolation.ReadOnly = true;
             txtViolation.ScrollBars = ScrollBars.Vertical;
-            txtViolation.Size = new Size(100, 23);
+            txtViolation.Size = new Size(450, 120);
             txtViolation.TabIndex = 5;
             // 
             // btnClose
             // 
-            btnClose.Location = new Point(40, 237);
+            btnClose.Location = new Point(40, 335);
             btnClose.Name = "btnClose";
             btnClose.Size = new Size(75, 23);
             btnClose.TabIndex = 6;
@@ -116,7 +116,7 @@
             Name = "CaseDetilsForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "AICMS - Case Details";
-            Load += this.CaseDetilsForm_Load;
+            Load += CaseDetilsForm_Load;
             ResumeLayout(false);
             PerformLayout();
         }
