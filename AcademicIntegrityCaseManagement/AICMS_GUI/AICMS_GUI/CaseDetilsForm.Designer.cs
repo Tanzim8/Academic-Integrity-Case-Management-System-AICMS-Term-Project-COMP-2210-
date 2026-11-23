@@ -100,6 +100,7 @@
             btnClose.TabIndex = 6;
             btnClose.Text = "Close";
             btnClose.UseVisualStyleBackColor = true;
+            btnClose.Click += btnClose_Click_1;
             // 
             // CaseDetilsForm
             // 

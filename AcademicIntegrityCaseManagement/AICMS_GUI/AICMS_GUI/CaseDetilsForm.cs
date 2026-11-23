@@ -12,7 +12,7 @@ namespace AICMS_GUI
 {
     public partial class CaseDetilsForm : Form
     {
-        public CaseDetilsForm( string caseId, string term, string assignment, string date, string violation)
+        public CaseDetilsForm(string caseId, string term, string assignment, string date, string violation)
         {
             InitializeComponent();
 
@@ -29,6 +29,11 @@ namespace AICMS_GUI
         }
 
         private void btnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void btnClose_Click_1(object sender, EventArgs e)
         {
             this.Close();
         }
