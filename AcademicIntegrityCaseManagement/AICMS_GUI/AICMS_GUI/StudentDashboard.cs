@@ -146,9 +146,20 @@ namespace AICMS_GUI
                 return;
             }
 
-            string caseId = dvgCases.SelectedRows[0].Cells["Case ID"].Value?.ToString() ?? "";
+            //string caseId = dvgCases.SelectedRows[0].Cells["Case ID"].Value?.ToString() ?? "";
 
-            MessageBox.Show("Selected Case ID: " + caseId);
+            //MessageBox.Show("Selected Case ID: " + caseId);
+
+            DataGridViewRow row = dvgCases.SelectedRows[0];
+
+            string caseId = row.Cells["Case ID"].Value?.ToString() ?? "";
+            string term = row.Cells["Term"].Value?.ToString() ?? "";
+            string assignment = row.Cells["Assignment"].Value?.ToString() ?? "";
+            string violation = row.Cells["Violation"].Value?.ToString() ?? "";
+            string date = row.Cells["Date"].Value?.ToString() ?? "";
+
+            CaseDetilsForm detailsForm = new CaseDetilsForm(caseId, term, assignment, date, violation);
+            detailsForm.ShowDialog();
         }
     }
 }
