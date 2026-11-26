@@ -2,7 +2,7 @@ import json
 import sys
 import sqlite3
 
-from services.records import (login_user, register_user, search_student_cases)
+from services.records import (login_user, register_user, search_student_cases, search_faculty_cases)
 
 def main():
 	try: 
@@ -89,6 +89,13 @@ def main():
 						"success": True,
 						"cases": records
 					}
+		elif request.get("action") == "faculty_cases":
+			faculty_id = request.get("faculty_id", "")
+			records = search_faculty_cases(faculty_id)
+			response = {
+				"success": True,
+				"cases": records
+			}
 		else:
 			response = {
 				"success": False,

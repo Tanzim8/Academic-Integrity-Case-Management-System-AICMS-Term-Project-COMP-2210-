@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.IO;
 using System.Diagnostics;
 using System.Text.Json;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace AICMS_GUI
 {
@@ -17,6 +12,9 @@ namespace AICMS_GUI
         public RegistraterForm()
         {
             InitializeComponent();
+
+            txtPassword.UseSystemPasswordChar = true;
+            txtConfirmPassword.UseSystemPasswordChar = true;
         }
 
         private void userType_Click(object sender, EventArgs e)
@@ -46,9 +44,14 @@ namespace AICMS_GUI
             string confirmPassword = txtConfirmPassword.Text;
 
             // Validate input fields
-            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(email) ||
-                string.IsNullOrEmpty(department) || string.IsNullOrEmpty(userType) || string.IsNullOrEmpty(username) ||
-                string.IsNullOrEmpty(password) || string.IsNullOrEmpty(confirmPassword))
+            if (string.IsNullOrWhiteSpace(userId) ||
+                string.IsNullOrWhiteSpace(fullName) ||
+                string.IsNullOrWhiteSpace(email) ||
+                string.IsNullOrWhiteSpace(department) ||
+                string.IsNullOrWhiteSpace(userType) ||
+                string.IsNullOrWhiteSpace(username) ||
+                string.IsNullOrWhiteSpace(password) ||
+                string.IsNullOrWhiteSpace(confirmPassword))
             {
                 MessageBox.Show("Please fill in all fields.");
                 return;
@@ -59,12 +62,13 @@ namespace AICMS_GUI
                 MessageBox.Show("Passwords do not match.");
                 return;
             }
+
             if (userType != "Student" && userType != "Faculty")
             {
                 MessageBox.Show("Please select a valid user type.");
                 return;
             }
-            //MessageBox.Show("Registration successful!");
+
             var registrationData = new
             {
                 action = "register",
@@ -77,17 +81,48 @@ namespace AICMS_GUI
                 password = password
             };
 
-            string request = System.Text.Json.JsonSerializer.Serialize(registrationData);
+            string request = JsonSerializer.Serialize(registrationData);
+
             btnRegister.Enabled = false;
 
             try
             {
-                string backendPath =
-                    @"C:\Users\user\source\repos\Academic-Integrity-Case-Management-System-AICMS-Term-Project-COMP-2210-\AcademicIntegrityCaseManagement";
+                // Dynamically locate the backend folder
+                string backendPath = Path.GetFullPath(
+                    Path.Combine(
+                        AppContext.BaseDirectory,
+                        "..", "..", "..", "..", ".."
+                    )
+                );
+
+                // Locate Python on the university computer
+                string pythonPath = Path.Combine(
+                    Environment.GetFolderPath(
+                        Environment.SpecialFolder.LocalApplicationData),
+                    "Programs", "Python", "Python314", "python.exe"
+                );
+
+                // Alternative path for personal desktop
+                if (!File.Exists(pythonPath))
+                {
+                    pythonPath = @"C:\Python314\python.exe";
+                }
+
+                if (!File.Exists(pythonPath))
+                {
+                    MessageBox.Show("Python executable was not found.");
+                    return;
+                }
+
+                if (!File.Exists(Path.Combine(backendPath, "bridge.py")))
+                {
+                    MessageBox.Show("bridge.py was not found in the backend folder.");
+                    return;
+                }
 
                 ProcessStartInfo psi = new ProcessStartInfo();
 
-                psi.FileName = @"C:\Python314\python.exe";
+                psi.FileName = pythonPath;
                 psi.Arguments = "bridge.py";
                 psi.WorkingDirectory = backendPath;
 
@@ -140,9 +175,10 @@ namespace AICMS_GUI
                 btnRegister.Enabled = true;
             }
         }
+
         private void txtPassword_TextChanged(object sender, EventArgs e)
         {
-            
+
         }
     }
 }

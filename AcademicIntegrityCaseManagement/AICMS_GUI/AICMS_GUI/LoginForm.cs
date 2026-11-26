@@ -131,6 +131,21 @@ namespace AICMS_GUI
                             txtPassword.Clear();
                         }
                     }
+                    else if (role == "Faculty")
+                    {
+                        using FacultyDashboard dashboard = new FacultyDashboard(userId, name);
+                        this.Hide();
+                        try
+                        {
+                            dashboard.ShowDialog();
+                        }
+                        finally
+                        {
+                            this.Show();
+                            txtPassword.Clear();
+                        }
+
+                    }
                     else
                     {
                         MessageBox.Show(
