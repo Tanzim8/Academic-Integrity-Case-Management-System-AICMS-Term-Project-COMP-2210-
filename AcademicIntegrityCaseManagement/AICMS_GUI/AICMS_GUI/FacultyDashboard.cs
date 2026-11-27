@@ -23,8 +23,15 @@ namespace AICMS_GUI
 
             btnLogout.Click += btnLogout_Click;
             btnRefresh.Click += btnRefresh_Click;
+            btnCreateCase.Click += btnCreateCase_Click;
 
             Load += FacultyDashboard_Load;
+        }
+
+        private void btnCreateCase_Click(object? sender, EventArgs e)
+        {
+            using CreateCaseForm form = new CreateCaseForm();
+            form.ShowDialog();
         }
 
         private async Task LoadFacultyCases()
