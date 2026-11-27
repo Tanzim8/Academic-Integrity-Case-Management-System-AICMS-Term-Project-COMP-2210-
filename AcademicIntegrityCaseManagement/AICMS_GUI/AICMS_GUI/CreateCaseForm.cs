@@ -4,6 +4,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace AICMS_GUI
 {
@@ -11,6 +12,17 @@ namespace AICMS_GUI
     {
         private string facultyId = "";
         private string facultyName = "";
+
+        private int currentCaseId;
+
+        private enum FormMode
+        {
+            Create,
+            View,
+            Update
+        }
+
+        private FormMode currentMode = FormMode.Create;
 
         public CreateCaseForm()
         {
@@ -28,6 +40,298 @@ namespace AICMS_GUI
 
             txtFacultyName.Text = facultyName;
             txtFacultyName.ReadOnly = true;
+        }
+
+        public CreateCaseForm(int caseId, bool isReadOnly)
+            : this()
+        {
+            currentCaseId = caseId;
+
+            currentMode = isReadOnly ? FormMode.View : FormMode.Update;
+
+            if (currentMode == FormMode.View)
+            {
+                this.Text = "View Case Details";
+                btnSaveCase.Visible = false;
+                btnCancel.Text = "Close";
+            }
+            else
+            {
+                this.Text = "Update Case Details";
+                btnSaveCase.Text = "Update Case";
+
+            }
+            this.Load += async (sender, e) => await LoadCaseDetails();
+        }
+
+        private async Task LoadCaseDetails()
+        {
+            string request = JsonSerializer.Serialize(new
+            {
+                action = "get_case_details",
+                case_id = currentCaseId
+            });
+
+            try
+            {
+                string backendPath = Path.GetFullPath(
+                    Path.Combine(
+                        AppContext.BaseDirectory,
+                        "..", "..", "..", "..", ".."
+                    )
+                );
+                string pythonPath = Path.Combine(
+                    Environment.GetFolderPath(
+                        Environment.SpecialFolder.LocalApplicationData),
+                    "Programs", "Python", "Python314", "python.exe"
+                    );
+                if (!File.Exists(pythonPath))
+                {
+                    pythonPath = @"C:\Python314\python.exe";
+                }
+
+                ProcessStartInfo psi = new ProcessStartInfo();
+
+                psi.FileName = pythonPath;
+                psi.Arguments = "bridge.py";
+                psi.WorkingDirectory = backendPath;
+
+                psi.UseShellExecute = false;
+                psi.RedirectStandardInput = true;
+                psi.RedirectStandardOutput = true;
+                psi.RedirectStandardError = true;
+                psi.CreateNoWindow = true;
+
+                using Process process = Process.Start(psi)!;
+
+                var outputTask = process.StandardOutput.ReadToEndAsync();
+                var errorTask = process.StandardError.ReadToEndAsync();
+
+                await process.StandardInput.WriteLineAsync(request);
+                process.StandardInput.Close();
+
+                await process.WaitForExitAsync();
+
+                string response = await outputTask;
+                string error = await errorTask;
+
+                //MessageBox.Show(response);
+
+                if (process.ExitCode != 0)
+                {
+                    MessageBox.Show("Python error: " + error);
+                    return;
+                }
+
+                using JsonDocument result = JsonDocument.Parse(response);
+
+                bool success = result.RootElement
+                    .GetProperty("success").GetBoolean();
+
+                //if (success)
+                //{
+                //    JsonElement caseDetails = result.RootElement
+                //        .GetProperty("case_details");
+
+                //    MessageBox.Show(caseDetails.ToString());
+                //}
+                if (success)
+                {
+                    JsonElement caseDetails = result.RootElement
+                        .GetProperty("case_details");
+
+                    PopulateCaseDetails(caseDetails);
+                    if (currentMode == FormMode.View)
+                    {
+                        SetReadOnlyMode(this);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show(
+                        result.RootElement.GetProperty("message").ToString()
+                        );
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        private void PopulateCaseDetails(JsonElement data)
+        {
+            // Tab 1 - Faculty Report
+
+            txtStudentName.Text =
+                data.GetProperty("student_name").ToString();
+
+            txtStudentId.Text =
+                data.GetProperty("student_id").ToString();
+
+            txtStudentEmail.Text =
+                data.GetProperty("student_email").ToString();
+
+            txtFacultyName.Text =
+                data.GetProperty("faculty_name").ToString();
+
+            txtCourse.Text =
+                data.GetProperty("course").ToString();
+
+            txtAssignment.Text =
+                data.GetProperty("assignment_number").ToString();
+
+            txtDepartment.Text =
+                data.GetProperty("case_department").ToString();
+
+            txtTerm.Text =
+                data.GetProperty("term").ToString();
+
+            txtViolation.Text =
+                data.GetProperty("ed_violation_description").ToString();
+
+            chkSupportPerson.Checked =
+                data.GetProperty("support_person_advised").ToString() == "1";
+
+            chkWrittenStatement.Checked =
+                data.GetProperty("written_statement_advised").ToString() == "1";
+
+            txtFacultySignature.Text =
+                data.GetProperty("faculty_signature").ToString();
+
+            if (DateTime.TryParse(
+                data.GetProperty("report_date").ToString(),
+                out DateTime reportDate))
+            {
+                dtpReportDate.Value = reportDate;
+            }
+
+            if (DateTime.TryParse(
+                data.GetProperty("faculty_signature_date").ToString(),
+                out DateTime signatureDate))
+            {
+                dtpSignatureDate.Value = signatureDate;
+            }
+            // Tab 2 - Student Acknowledgement
+
+            txtStudentAckName.Text =
+                data.GetProperty("student_acknowledgement_name").ToString();
+
+            chkEvidenceReviewed.Checked =
+                data.GetProperty("evidence_reviewed").ToString() == "1";
+
+            txtMyTruEmail.Text =
+                data.GetProperty("mytru_email").ToString();
+
+            txtStudentSignature.Text =
+                data.GetProperty("student_signature").ToString();
+
+            // Faculty Follow-up
+
+            txtFacultyFollowupName.Text =
+                data.GetProperty("faculty_followup_name").ToString();
+
+            txtFacultyFollowupSignature.Text =
+                data.GetProperty("faculty_followup_signature").ToString();
+
+            // Tab 3 - Chair & Dean
+
+            txtChairComments.Text =
+                data.GetProperty("chair_comments").ToString();
+
+            txtChairSignature.Text =
+                data.GetProperty("chair_signature").ToString();
+
+            txtDeanComments.Text =
+                data.GetProperty("dean_comments").ToString();
+
+            txtDeanSignature.Text =
+                data.GetProperty("dean_signature").ToString();
+
+            // Tab 4 - Faculty Comments
+
+            txtFacultyComments.Text =
+                data.GetProperty("faculty_comments").ToString();
+
+            // Tab 5 - Student Comments
+
+            txtStudentComments.Text =
+                data.GetProperty("student_comments").ToString();
+
+            // Optional dates
+
+            SetOptionalDate(dtpStudentSignatureDate,
+                data.GetProperty("student_signature_date"));
+
+            SetOptionalDate(dtpFacultyFollowupDate,
+                data.GetProperty("faculty_followup_date"));
+
+            SetOptionalDate(dtpChairDate,
+                data.GetProperty("chair_date"));
+
+            SetOptionalDate(dtpDeanDate,
+                data.GetProperty("dean_date"));
+
+            SetOptionalDate(dtpSignatureDate,
+                data.GetProperty("faculty_signature_date"));
+
+            SetAgreement(chkChairAgrees,
+                data.GetProperty("chair_agrees"));
+
+            SetAgreement(chkDeanAgrees,
+                data.GetProperty("dean_agrees"));
+        }
+
+        private void SetOptionalDate(DateTimePicker picker, JsonElement value)
+        {
+            picker.ShowCheckBox = true;
+
+            if (DateTime.TryParse(value.ToString(), out DateTime date))
+            {
+                picker.Value = date;
+                picker.Checked = true;
+            }
+            else
+            {
+                picker.Checked = false;
+            }
+        }
+        private void SetAgreement(CheckBox checkbox, JsonElement value)
+        {
+            checkbox.ThreeState = true;
+
+            if (value.ValueKind == JsonValueKind.Null)
+            {
+                checkbox.CheckState = CheckState.Indeterminate;
+            }
+            else
+            {
+                checkbox.CheckState = value.GetInt32() == 1
+                    ? CheckState.Checked
+                    : CheckState.Unchecked;
+            }
+        }
+
+        private void SetReadOnlyMode(Control parent)
+        {
+            foreach (Control control in parent.Controls)
+            {
+                if (control is TextBoxBase textBox)
+                {
+                    textBox.ReadOnly = true;
+                }
+                else if (control is CheckBox ||
+                         control is DateTimePicker ||
+                         control is ComboBox)
+                {
+                    control.Enabled = false;
+                }
+
+                if (control.HasChildren)
+                {
+                    SetReadOnlyMode(control);
+                }
+            }
         }
 
         private void btnCancel_Click(object? sender, EventArgs e)

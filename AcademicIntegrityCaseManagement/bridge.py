@@ -2,7 +2,7 @@ import json
 import sys
 import sqlite3
 
-from services.records import (login_user, register_user, search_student_cases, search_faculty_cases, create_ed_case)
+from services.records import (login_user, register_user, search_student_cases, search_faculty_cases, create_ed_case, get_full_case)
 
 def main():
 	try: 
@@ -118,6 +118,19 @@ def main():
 				response = {
 					"success": False,
 					"message": "Invalid case information."
+				}
+		elif request.get("action") == "get_case_details":
+			case_id = request.get("case_id")
+			case_details = get_full_case(case_id)
+			if case_details:
+				response = {
+					"success": True,
+					"case_details": case_details
+				}
+			else:
+				response = {
+					"success": False,
+					"message": "Case not found."
 				}
 		else:
 			response = {

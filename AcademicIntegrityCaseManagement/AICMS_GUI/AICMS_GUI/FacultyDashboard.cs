@@ -172,20 +172,43 @@ namespace AICMS_GUI
         {
         }
 
+        //private void btnViewDetails_Click(object? sender, EventArgs e)
+        //{
+        //    if (dvgCases.SelectedRows.Count > 0)
+        //    {
+        //        DataGridViewRow row = dvgCases.SelectedRows[0];
+
+        //        string caseId = row.Cells[0].Value.ToString() ?? "";
+        //        string term = row.Cells[2].Value.ToString() ?? "";
+        //        string assignment = row.Cells[3].Value.ToString() ?? "";
+        //        string violation = row.Cells[4].Value.ToString() ?? "";
+        //        string date = row.Cells[5].Value.ToString() ?? "";
+
+        //        CaseDetailsForm detailsForm = new CaseDetailsForm(caseId, term, assignment, date, violation);
+        //        detailsForm.Show();
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show("Please select a case to view details.");
+        //    }
+        //}
+
         private void btnViewDetails_Click(object? sender, EventArgs e)
         {
             if (dvgCases.SelectedRows.Count > 0)
             {
                 DataGridViewRow row = dvgCases.SelectedRows[0];
 
-                string caseId = row.Cells[0].Value.ToString() ?? "";
-                string term = row.Cells[2].Value.ToString() ?? "";
-                string assignment = row.Cells[3].Value.ToString() ?? "";
-                string violation = row.Cells[4].Value.ToString() ?? "";
-                string date = row.Cells[5].Value.ToString() ?? "";
+                if(int.TryParse(row.Cells[0].Value.ToString(), out int caseId))
+                {
+                    using CreateCaseForm detailsForm = new CreateCaseForm(caseId, true);
 
-                CaseDetailsForm detailsForm = new CaseDetailsForm(caseId, term, assignment, date, violation);
-                detailsForm.Show();
+                    detailsForm.ShowDialog();
+                }
+                else
+                {
+                    MessageBox.Show("Invalid Case ID.");
+                }
             }
             else
             {

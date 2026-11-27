@@ -491,6 +491,53 @@ def search_faculty_cases(faculty_id):
     connection.close()
     return records
 
+def get_full_case(case_id):
+    connection = sqlite3.connect("data/cases.db")
+    connection.row_factory = sqlite3.Row  # This allows us to access columns by name
+    cursor = connection.cursor()
+    cursor.execute(
+        """
+        SELECT ed_case_info.*,
+        student.name AS student_name,
+        student.email AS student_email,
+        faculty.name AS faculty_name,
+        ed_case_comments.chair_comments,
+        ed_case_comments.dean_comments,
+        ed_case_comments.faculty_comments,
+        ed_case_comments.student_comments,
+        ed_case_acknowledgements.support_person_advised,
+        ed_case_acknowledgements.written_statement_advised,
+        ed_case_acknowledgements.faculty_signature,
+        ed_case_acknowledgements.faculty_signature_date,
+        ed_case_acknowledgements.student_acknowledgement_name,
+        ed_case_acknowledgements.evidence_reviewed,
+        ed_case_acknowledgements.mytru_email,
+        ed_case_acknowledgements.student_signature,
+        ed_case_acknowledgements.student_signature_date,
+        ed_case_acknowledgements.faculty_followup_signature,
+        ed_case_acknowledgements.faculty_followup_name,
+        ed_case_acknowledgements.faculty_followup_date,
+        ed_case_reviews.chair_agrees,
+        ed_case_reviews.chair_signature,
+        ed_case_reviews.chair_date,
+        ed_case_reviews.dean_agrees,
+        ed_case_reviews.dean_signature,
+        ed_case_reviews.dean_date
+        FROM ed_case_info
+        LEFT JOIN ed_case_comments ON ed_case_info.case_id = ed_case_comments.case_id
+        LEFT JOIN ed_case_acknowledgements ON ed_case_info.case_id = ed_case_acknowledgements.case_id
+        LEFT JOIN ed_case_reviews ON ed_case_info.case_id = ed_case_reviews.case_id
+        LEFT JOIN users AS student
+        ON ed_case_info.student_id = student.user_id
+        LEFT JOIN users AS faculty
+        ON ed_case_info.faculty_id = faculty.user_id
+                WHERE ed_case_info.case_id = ?
+        """, (case_id,)
+    )
+    record = cursor.fetchone()
+    connection.close()
+    return dict(record) if record else None
+
 
 
 # #Inserting a new case in the database using the collected information
