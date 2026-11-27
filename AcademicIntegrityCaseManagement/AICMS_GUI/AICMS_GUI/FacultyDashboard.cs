@@ -28,9 +28,9 @@ namespace AICMS_GUI
             Load += FacultyDashboard_Load;
         }
 
-        private void btnCreateCase_Click(object? sender, EventArgs e)
+        private void btnCreateCase_Click(object sender, EventArgs e)
         {
-            using CreateCaseForm form = new CreateCaseForm();
+            using CreateCaseForm form = new CreateCaseForm(facultyId, facultyName);
             form.ShowDialog();
         }
 
