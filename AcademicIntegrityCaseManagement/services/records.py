@@ -175,7 +175,7 @@ def login_user(username, password):
     # connection.close()
 
 
-def create_ed_case(case_info): 
+def create_ed_case_old(case_info): 
     connection = sqlite3.connect("data/cases.db")
     cursor = connection.cursor()
 
@@ -226,6 +226,148 @@ def create_ed_case(case_info):
     connection.commit()
     connection.close()
     return case_id
+
+def create_ed_case(case_info):
+    connection = sqlite3.connect("data/cases.db")
+    connection.execute("PRAGMA foreign_keys = ON")
+    cursor = connection.cursor()
+
+    try:
+        # Validate student
+        cursor.execute("""
+            SELECT user_id FROM users
+            WHERE user_id = ? AND user_type = 'Student'
+        """, (case_info["student_id"],))
+
+        if cursor.fetchone() is None:
+            raise ValueError("Student ID does not exist.")
+
+        # Validate faculty
+        cursor.execute("""
+            SELECT user_id FROM users
+            WHERE user_id = ? AND user_type = 'Faculty'
+        """, (case_info["faculty_id"],))
+
+        if cursor.fetchone() is None:
+            raise ValueError("Faculty ID does not exist.")
+
+        # TABLE 1 - Main case information
+        cursor.execute("""
+            INSERT INTO ed_case_info (
+                student_id,
+                faculty_id,
+                chair_id,
+                dean_id,
+                term,
+                assignment_number,
+                ed_violation_description,
+                violation_date,
+                course,
+                report_date,
+                case_department,
+                recommended_sanction
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            case_info["student_id"],
+            case_info["faculty_id"],
+            case_info.get("chair_id") or None,
+            case_info.get("dean_id") or None,
+            case_info["term"],
+            case_info["assignment_number"],
+            case_info["ed_violation_description"],
+            case_info.get("violation_date"),
+            case_info.get("course"),
+            case_info.get("report_date"),
+            case_info.get("case_department"),
+            case_info.get("recommended_sanction")
+        ))
+
+        case_id = cursor.lastrowid
+
+        # TABLE 2 - Acknowledgements and signatures
+        cursor.execute("""
+            INSERT INTO ed_case_acknowledgements (
+                case_id,
+                support_person_advised,
+                written_statement_advised,
+                faculty_signature,
+                faculty_signature_date,
+                student_acknowledgement_name,
+                evidence_reviewed,
+                mytru_email,
+                student_signature,
+                student_signature_date,
+                faculty_followup_signature,
+                faculty_followup_name,
+                faculty_followup_date
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            case_id,
+            case_info.get("support_person_advised"),
+            case_info.get("written_statement_advised"),
+            case_info.get("faculty_signature"),
+            case_info.get("faculty_signature_date"),
+            case_info.get("student_acknowledgement_name"),
+            case_info.get("evidence_reviewed"),
+            case_info.get("mytru_email"),
+            case_info.get("student_signature"),
+            case_info.get("student_signature_date"),
+            case_info.get("faculty_followup_signature"),
+            case_info.get("faculty_followup_name"),
+            case_info.get("faculty_followup_date")
+        ))
+
+        # TABLE 3 - Chair and Dean reviews
+        cursor.execute("""
+            INSERT INTO ed_case_reviews (
+                case_id,
+                chair_agrees,
+                chair_signature,
+                chair_date,
+                dean_agrees,
+                dean_signature,
+                dean_date
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (
+            case_id,
+            case_info.get("chair_agrees"),
+            case_info.get("chair_signature"),
+            case_info.get("chair_date"),
+            case_info.get("dean_agrees"),
+            case_info.get("dean_signature"),
+            case_info.get("dean_date")
+        ))
+
+        # TABLE 4 - Additional comments
+        cursor.execute("""
+            INSERT INTO ed_case_comments (
+                case_id,
+                chair_comments,
+                dean_comments,
+                faculty_comments,
+                student_comments
+            )
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            case_id,
+            case_info.get("chair_comments"),
+            case_info.get("dean_comments"),
+            case_info.get("faculty_comments"),
+            case_info.get("student_comments")
+        ))
+
+        connection.commit()
+        return case_id
+
+    except Exception:
+        connection.rollback()
+        raise
+
+    finally:
+        connection.close()
 
 def search_ed_case(case_id): 
     connection = sqlite3.connect("data/cases.db")

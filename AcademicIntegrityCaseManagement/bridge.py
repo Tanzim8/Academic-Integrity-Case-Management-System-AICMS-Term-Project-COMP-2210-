@@ -2,7 +2,7 @@ import json
 import sys
 import sqlite3
 
-from services.records import (login_user, register_user, search_student_cases, search_faculty_cases)
+from services.records import (login_user, register_user, search_student_cases, search_faculty_cases, create_ed_case)
 
 def main():
 	try: 
@@ -96,6 +96,29 @@ def main():
 				"success": True,
 				"cases": records
 			}
+		elif request.get("action") == "create_case":
+			case_info = request.get("case_info", {})
+
+			try:
+				case_id = create_ed_case(case_info)
+
+				response = {
+					"success": True,
+					"case_id": case_id,
+					"message": "Case created successfully!"
+				}
+
+			except ValueError as ex:
+				response = {
+					"success": False,
+					"message": str(ex)
+				}
+
+			except sqlite3.IntegrityError:
+				response = {
+					"success": False,
+					"message": "Invalid case information."
+				}
 		else:
 			response = {
 				"success": False,
