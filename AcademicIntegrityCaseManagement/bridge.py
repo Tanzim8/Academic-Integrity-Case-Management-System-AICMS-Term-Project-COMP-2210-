@@ -2,7 +2,7 @@ import json
 import sys
 import sqlite3
 
-from services.records import (login_user, register_user, search_student_cases, search_faculty_cases, create_ed_case, get_full_case)
+from services.records import (login_user, register_user, search_student_cases, search_faculty_cases, create_ed_case, get_full_case, update_full_case)
 
 def main():
 	try: 
@@ -131,6 +131,21 @@ def main():
 				response = {
 					"success": False,
 					"message": "Case not found."
+				}
+		elif request.get("action") == "update_case":
+			case_id = request.get("case_id")
+			faculty_id = request.get("faculty_id")
+			case_info = request.get("case_info")
+
+			if updated: 
+				response = {
+					"success": True,
+					"message": "Case updated successfully!"
+					}
+			else:
+				response = {
+					"success": False,
+					"message": "Case not found or access denied."
 				}
 		else:
 			response = {
