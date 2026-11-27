@@ -1,6 +1,6 @@
 ﻿namespace AICMS_GUI
 {
-    partial class CaseDetilsForm
+    partial class CaseDetailsForm
     {
         /// <summary>
         /// Required designer variable.

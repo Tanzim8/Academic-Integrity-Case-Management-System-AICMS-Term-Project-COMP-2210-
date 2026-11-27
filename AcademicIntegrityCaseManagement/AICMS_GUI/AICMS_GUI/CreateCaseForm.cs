@@ -35,6 +35,10 @@ namespace AICMS_GUI
             this.Close();
         }
 
+        private void tabFaculty_Click(object? sender, EventArgs e)
+        {
+        }
+
         private string? GetOptionalDate(DateTimePicker picker)
         {
             return picker.Checked

@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace AICMS_GUI
 {
-    public partial class CaseDetilsForm : Form
+    public partial class CaseDetailsForm : Form
     {
-        public CaseDetilsForm(string caseId, string term, string assignment, string date, string violation)
+        public CaseDetailsForm(string caseId, string term, string assignment, string date, string violation)
         {
             InitializeComponent();
 
@@ -37,5 +37,6 @@ namespace AICMS_GUI
         {
             this.Close();
         }
+
     }
 }

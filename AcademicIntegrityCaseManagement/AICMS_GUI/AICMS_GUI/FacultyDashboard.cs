@@ -24,6 +24,7 @@ namespace AICMS_GUI
             btnLogout.Click += btnLogout_Click;
             btnRefresh.Click += btnRefresh_Click;
             btnCreateCase.Click += btnCreateCase_Click;
+            btnViewDetails.Click += btnViewDetails_Click;
 
             Load += FacultyDashboard_Load;
         }
@@ -169,6 +170,27 @@ namespace AICMS_GUI
 
         private void button2_Click(object sender, EventArgs e)
         {
+        }
+
+        private void btnViewDetails_Click(object? sender, EventArgs e)
+        {
+            if (dvgCases.SelectedRows.Count > 0)
+            {
+                DataGridViewRow row = dvgCases.SelectedRows[0];
+
+                string caseId = row.Cells[0].Value.ToString() ?? "";
+                string term = row.Cells[2].Value.ToString() ?? "";
+                string assignment = row.Cells[3].Value.ToString() ?? "";
+                string violation = row.Cells[4].Value.ToString() ?? "";
+                string date = row.Cells[5].Value.ToString() ?? "";
+
+                CaseDetailsForm detailsForm = new CaseDetailsForm(caseId, term, assignment, date, violation);
+                detailsForm.Show();
+            }
+            else
+            {
+                MessageBox.Show("Please select a case to view details.");
+            }
         }
     }
 }

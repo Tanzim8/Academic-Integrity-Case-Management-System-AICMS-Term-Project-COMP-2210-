@@ -178,7 +178,7 @@ namespace AICMS_GUI
             string violation = row.Cells["Violation"].Value?.ToString() ?? "";
             string date = row.Cells["Date"].Value?.ToString() ?? "";
 
-            CaseDetilsForm detailsForm = new CaseDetilsForm(caseId, term, assignment, date, violation);
+            CaseDetailsForm detailsForm = new CaseDetailsForm(caseId, term, assignment, date, violation);
             detailsForm.ShowDialog();
         }
     }

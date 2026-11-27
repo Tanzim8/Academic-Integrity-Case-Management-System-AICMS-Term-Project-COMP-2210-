@@ -484,7 +484,7 @@ def search_faculty_cases(faculty_id):
     cursor = connection.cursor()
 
     cursor.execute(
-        "SELECT * FROM ed_case_info WHERE faculty_id = ?",(faculty_id,)
+        "SELECT case_id, student_id, term, assignment_number, ed_violation_description, violation_date FROM ed_case_info WHERE faculty_id = ?",(faculty_id,)
     )
     records = cursor.fetchall()
 
